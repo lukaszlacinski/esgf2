@@ -1,0 +1,47 @@
+{
+    "definition": {
+        "StartAt": "IndexUnpublish",
+        "States": {
+            "IndexUnpublish": {
+                "Type": "Action",
+                "ActionUrl": "https://compute.actions.globus.org",
+                "Parameters": {
+                    "endpoint.$": "$.compute_endpoint_id",
+                    "function.$": "$.index_unpublish_id",
+                    "args.=": "[dataset_id]",
+                    "kwargs": {}
+                },
+                "ResultPath": "$.IndexUnpublishResult",
+                "ActionScope": "https://auth.globus.org/scopes/facd7ccc-c5f4-42aa-916b-a0e270e2c2a9/all",
+                "End": true
+            }
+        }
+    },
+    "input_schema": {
+        "type": "object",
+        "properties": {
+             "dataset_id": {
+                "type": "string",
+                "title": "Dataset Id"
+            },
+            "compute_endpoint_id": {
+                "type": "string",
+                "title": "Globus Compute UUID",
+                "format": "uuid",
+                "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                "maxLength": 36,
+                "minLength": 36,
+                "description": "The UUID for the Globus Compute Endpoint where climate data that are to be unpublished"
+            },
+            "index_unpublish_id": {
+                "type": "string",
+                "title": "Index Unpublish Compute Function UUID",
+                "format": "uuid",
+                "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                "maxLength": 36,
+                "minLength": 36,
+                "description": "The UUID of the Index Unpublish Compute Function that will be run to unpublish a dataset"
+            }
+        }
+    }
+}

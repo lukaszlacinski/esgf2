@@ -1,0 +1,212 @@
+{
+    "definition": {
+        "StartAt": "Transfer",
+        "States": {
+            "Transfer": {
+                "Type": "Action",
+                "Comment": "Transfer a directory with dataset files to the ESGF2 data node",
+                "WaitTime": 172800,
+                "ActionUrl": "https://actions.globus.org/transfer/transfer",
+                "Parameters": {
+                    "transfer_items": [
+                        {
+                            "recursive": true,
+                            "source_path.$": "$.source.path",
+                            "destination_path.=": "destination_path_prefix + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/' + facets.version + '/'"
+                        }
+                    ],
+                    "source_endpoint_id.$": "$.source.id",
+                    "destination_endpoint_id": "3ec77f8a-bcfd-11ed-b206-d150fa9edad1"
+                },
+                "ResultPath": "$.TransferResult",
+                "Next": "GenerateMapfile"
+            },
+            "GenerateMapfile": {
+                "Type": "Action",
+                "ActionUrl": "https://compute.actions.globus.org",
+                "Parameters": {
+                    "endpoint.$": "$.compute_endpoint_id",
+                    "function.$": "$.generate_mapfile_id",
+                    "args.=": "[data_path_prefix + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/' + facets.version + '/']",
+                    "kwargs": {}
+                },
+                "ResultPath": "$.GenerateMapfileResult",
+                "ActionScope": "https://auth.globus.org/scopes/facd7ccc-c5f4-42aa-916b-a0e270e2c2a9/all",
+                "Next": "RunAutocurator"
+            },
+            "RunAutocurator": {
+                "Type": "Action",
+                "ActionUrl": "https://compute.actions.globus.org",
+                "Parameters": {
+                    "endpoint.$": "$.compute_endpoint_id",
+                    "function.$": "$.run_autocurator_id",
+                    "args.=": "[GenerateMapfileResult.details.result[0]]",
+                    "kwargs": {}
+                },
+                "ResultPath": "$.RunAutocuratorResult",
+                "ActionScope": "https://auth.globus.org/scopes/facd7ccc-c5f4-42aa-916b-a0e270e2c2a9/all",
+                "Next": "MakePublicationRecords"
+            },
+            "MakePublicationRecords": {
+                "Type": "Action",
+                "ActionUrl": "https://compute.actions.globus.org",
+                "Parameters": {
+                    "endpoint.$": "$.compute_endpoint_id",
+                    "function.$": "$.make_publication_records_id",
+                    "args.=": "[GenerateMapfileResult.details.result[0]]",
+                    "kwargs": {}
+                },
+                "ResultPath": "$.MakePublicationRecordsResult",
+                "ActionScope": "https://auth.globus.org/scopes/facd7ccc-c5f4-42aa-916b-a0e270e2c2a9/all",
+                "Next": "GetPID"
+            },
+            "GetPID": {
+                "Type": "Action",
+                "ActionUrl": "https://compute.actions.globus.org",
+                "Parameters": {
+                    "endpoint.$": "$.compute_endpoint_id",
+                    "function.$": "$.get_pid_id",
+                    "args.=": "[GenerateMapfileResult.details.result[0]]",
+                    "kwargs": {}
+                },
+                "ResultPath": "$.GetPIDResult",
+                "ActionScope": "https://auth.globus.org/scopes/facd7ccc-c5f4-42aa-916b-a0e270e2c2a9/all",
+                "Next": "IndexPublish"
+            },
+            "IndexPublish": {
+                "Type": "Action",
+                "ActionUrl": "https://compute.actions.globus.org",
+                "Parameters": {
+                    "endpoint.$": "$.compute_endpoint_id",
+                    "function.$": "$.index_publish_id",
+                    "args.=": "[GenerateMapfileResult.details.result[0]]",
+                    "kwargs": {}
+                },
+                "ResultPath": "$.IndexPublishResult",
+                "ActionScope": "https://auth.globus.org/scopes/facd7ccc-c5f4-42aa-916b-a0e270e2c2a9/all",
+                "End": true
+            }
+        }
+    },
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "source": {
+                "type": "object",
+                "title": "Endpoint with dataset files",
+                "format": "globus-collection",
+                "required": [
+                    "id",
+                    "path"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "title": "Compute Resource Collection ID",
+                        "format": "uuid",
+                        "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                        "maxLength": 36,
+                        "minLength": 36,
+                        "description": "The UUID for the compute resource collection"
+                    },
+                    "path": {
+                        "type": "string",
+                        "title": "Compute Resource Collection Path",
+                        "description": "The path on the compute resource collection"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "destination_path_prefix": {
+                "type": "string",
+                "title": "A root path of the climate file directory structure relative to the root of the ESGF2 data Globus endpoint"
+            },
+            "facets": {
+                "type": "object",
+                "title": "Facets",
+                "properties": {
+                    "activity_drs": {
+                        "type": "string",
+                        "title": "Facet - activity_drs"
+                    },
+                    "institution_id": {
+                        "type": "string",
+                        "title": "Facet - institution_id"
+                    },
+                    "dource_id": {
+                        "type": "string",
+                        "title": "Facet - dource_id"
+                    },
+                    "experiment_id": {
+                        "type": "string",
+                        "title": "Facet - experiment_id"
+                    },
+                    "member_id": {
+                        "type": "string",
+                        "title": "Facet - member_id"
+                    },
+                    "table_id": {
+                        "type": "string",
+                        "title": "Facet - table_id"
+                    },
+                    "variable_id": {
+                        "type": "string",
+                        "title": "Facet - variable_id"
+                    },
+                    "grid_label": {
+                        "type": "string",
+                        "title": "Facet - grid_label"
+                    },
+                    "version": {
+                        "type": "string",
+                        "title": "Version (date: vYYYYMMDD)"
+                    }
+                },
+                "required": [
+                    "activity_drs",
+                    "institution_id",
+                    "dource_id",
+                    "experiment_id",
+                    "member_id",
+                    "table_id",
+                    "variable_id",
+                    "grid_label",
+                    "version"
+                ],
+                "propertyOrder": [
+                    "activity_drs",
+                    "institution_id",
+                    "dource_id",
+                    "experiment_id",
+                    "member_id",
+                    "table_id",
+                    "variable_id",
+                    "grid_label",
+                    "version"
+                ]
+            },
+            "data_path_prefix": {
+                "type": "string",
+                "title": "A root path of the climate file directory structure on the ESGF2 data"
+            },
+            "compute_endpoint_id": {
+                "type": "string",
+                "title": "Globus Compute UUID",
+                "format": "uuid",
+                "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                "maxLength": 36,
+                "minLength": 36,
+                "description": "The UUID for the Globus Compute Endpoint where climate data are transferred to"
+            },
+            "generate_mapfile_id": {
+                "type": "string",
+                "title": "Generate Mapfile Compute Function UUID",
+                "format": "uuid",
+                "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                "maxLength": 36,
+                "minLength": 36,
+                "description": "The UUID for the Generate Mapfile Compute Function that will be run to generate a mapfile for a dataset being published"
+            }
+        }
+    }
+}
