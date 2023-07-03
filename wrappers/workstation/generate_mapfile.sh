@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/opt/esgf2/generate_mapfile.py $1 $2
+/opt/esgf2/wrappers/generate_mapfile.py $1 $2

@@ -47,7 +47,7 @@ def generate_mapfile(dataset_id, dataset_path, mapfile_path):
 if __name__ == "__main__":
 
     dataset_id = "#".join(sys.argv[1].rsplit("/v", 1)).replace("/", ".")
-    dataset_path = "/home/lukasz/globus-shared-files/css03_data/" + sys.argv[1]
+    dataset_path = "/opt/esgf2/data/css03_data/" + sys.argv[1]
     mapfile_path = sys.argv[2]
 
     generate_mapfile(dataset_id, dataset_path, mapfile_path)
