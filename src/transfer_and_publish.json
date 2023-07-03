@@ -12,11 +12,11 @@
                         {
                             "recursive": true,
                             "source_path.$": "$.source.path",
-                            "destination_path.=": "destination_path_prefix + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/' + facets.version + '/'"
+                            "destination_path.=": "destination_path_prefix + '/' + facets.project + '/' + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/v' + facets.version + '/'"
                         }
                     ],
                     "source_endpoint_id.$": "$.source.id",
-                    "destination_endpoint_id": "3ec77f8a-bcfd-11ed-b206-d150fa9edad1"
+                    "destination_endpoint_id.$": "$.destination.id"
                 },
                 "ResultPath": "$.TransferResult",
                 "Next": "GenerateMapfile"
@@ -27,7 +27,7 @@
                 "Parameters": {
                     "endpoint.$": "$.compute_endpoint_id",
                     "function.$": "$.generate_mapfile_id",
-                    "args.=": "[data_path_prefix + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/' + facets.version + '/']",
+                    "args.=": "[facets.project + '/' + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/v' + facets.version]",
                     "kwargs": {}
                 },
                 "ResultPath": "$.GenerateMapfileResult",
@@ -40,7 +40,7 @@
                 "Parameters": {
                     "endpoint.$": "$.compute_endpoint_id",
                     "function.$": "$.run_autocurator_id",
-                    "args.=": "[GenerateMapfileResult.details.result[0]]",
+                    "args.=": "[facets.project + '/' + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/v' + facets.version, GenerateMapfileResult.details.result[0]]",
                     "kwargs": {}
                 },
                 "ResultPath": "$.RunAutocuratorResult",
@@ -125,6 +125,10 @@
                 "type": "object",
                 "title": "Facets",
                 "properties": {
+                    "project": {
+                        "type": "string",
+                        "title": "Facet - project"
+                    },
                     "activity_drs": {
                         "type": "string",
                         "title": "Facet - activity_drs"
@@ -163,6 +167,7 @@
                     }
                 },
                 "required": [
+                    "project",
                     "activity_drs",
                     "institution_id",
                     "dource_id",
@@ -174,6 +179,7 @@
                     "version"
                 ],
                 "propertyOrder": [
+                    "project",
                     "activity_drs",
                     "institution_id",
                     "dource_id",
@@ -191,21 +197,48 @@
             },
             "compute_endpoint_id": {
                 "type": "string",
-                "title": "Globus Compute UUID",
+                "title": "Globus Compute Endpoint UUID",
                 "format": "uuid",
                 "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
                 "maxLength": 36,
                 "minLength": 36,
                 "description": "The UUID for the Globus Compute Endpoint where climate data are transferred to"
             },
-            "generate_mapfile_id": {
+            "run_autocurator_id": {
                 "type": "string",
-                "title": "Generate Mapfile Compute Function UUID",
+                "title": "Run autocurator Compute Function UUID",
                 "format": "uuid",
                 "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
                 "maxLength": 36,
                 "minLength": 36,
-                "description": "The UUID for the Generate Mapfile Compute Function that will be run to generate a mapfile for a dataset being published"
+                "description": "The UUID for the Run Autocurator Compute Function that will be run to extract metadata and curate climate files"
+            },
+            "make_publication_records_id": {
+                "type": "string",
+                "title": "Make Publication Records Compute Function UUID",
+                "format": "uuid",
+                "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                "maxLength": 36,
+                "minLength": 36,
+                "description": "The UUID for the Make Publication Records Compute Function that combine the map file and metadata extracted from climate files into a publication entry"
+            },
+            "get_pid_id": {
+                "type": "string",
+                "title": "Get PID Compute Function UUID",
+                "format": "uuid",
+                "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                "maxLength": 36,
+                "minLength": 36,
+                "description": "The UUID for the Get PID Compute Function that obtain a PID and assign it to a dataset being published"
+            },
+            "index_publish_id": {
+                "type": "string",
+                "title": "Index Publish Compute Function UUID",
+                "format": "uuid",
+                "pattern": "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}",
+                "maxLength": 36,
+                "minLength": 36,
+                "description": "The UUID for the Index Publish Compute Function that publish a dataset to the index"
             }
         }
     }

@@ -1,9 +1,12 @@
+
+
+
 def generate_mapfile(path):
     import sys
     import uuid
     import subprocess
     publication_uuid = str(uuid.uuid4())
-    mapfile = "/tmp/esgf2/" + publication_uuid + ".json"
+    mapfile = "/tmp/esgf2/" + publication_uuid + "/mapfile.json"
     cp = subprocess.run(["/opt/esgf2/generate_mapfile.sh", path, mapfile],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
@@ -12,12 +15,11 @@ def generate_mapfile(path):
     return publication_uuid
 
 
-def run_autocurator(publication_uuid):
+def run_autocurator(path, publication_uuid):
     import sys
     import subprocess
-    mapfile = "/tmp/esgf2/" + publication_uuid + "_mapfile.json"
-    scanfile = "/tmp/esgf2/" + publication_uuid + "_scanfile.json"
-    cp = subprocess.run(["/opt/esgf2/run_autocurator.sh", mapfile, scanfile],
+    scanfile = "/tmp/esgf2/" + publication_uuid + "/scanfile.json"
+    cp = subprocess.run(["/opt/esgf2/run_autocurator.sh", path, scanfile],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
     if cp.returncode:
@@ -27,9 +29,9 @@ def run_autocurator(publication_uuid):
 def make_publication_records(publication_uuid):
     import sys
     import subprocess
-    mapfile = "/tmp/esgf2/" + publication_uuid + "_mapfile.json"
-    scanfile = "/tmp/esgf2/" + publication_uuid + "_scanfile.json"
-    pubrecfile = "/tmp/esgf2/" + publication_uuid + "_pubrec.json"
+    mapfile = "/tmp/esgf2/" + publication_uuid + "/mapfile.json"
+    scanfile = "/tmp/esgf2/" + publication_uuid + "/scanfile.json"
+    pubrecfile = "/tmp/esgf2/" + publication_uuid + "/pubrec.json"
     cp = subprocess.run(["/opt/esgf2/make_publication_records.sh", mapfile, scanfile, pubrecfile],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
@@ -40,8 +42,8 @@ def make_publication_records(publication_uuid):
 def get_pid(publication_uuid):
     import sys
     import subprocess
-    pubrecfile = "/tmp/esgf2/" + publication_uuid + "_pubrec.json"
-    pidfile = "/tmp/esgf2/" + publication_uuid + "_pid.json"
+    pubrecfile = "/tmp/esgf2/" + publication_uuid + "/pubrec.json"
+    pidfile = "/tmp/esgf2/" + publication_uuid + "/pid.json"
     cp = subprocess.run(["/opt/esgf2/get_pid.sh", pubrecfile, pidfile],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
@@ -52,7 +54,7 @@ def get_pid(publication_uuid):
 def index_publish(publication_uuid):
     import sys
     import subprocess
-    pidfile = "/tmp/esgf2/" + publication_uuid + "_pid.json"
+    pidfile = "/tmp/esgf2/" + publication_uuid + "/pid.json"
     cp = subprocess.run(["/opt/esgf2/index_publish.sh", pidfile],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)

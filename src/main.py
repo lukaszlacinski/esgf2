@@ -1,6 +1,3 @@
-import os
-import sys
-
 from settings import settings
 from config import Config
 from auth import AuthManager
@@ -34,9 +31,12 @@ if __name__ == "__main__":
             "id": "8896f38e-68d1-4708-bce4-b1b3a3405809",
             "path": "/flows/CMIP6/AerChemMIP/EC-Earth-Consortium/EC-Earth3-AerChem/hist-piAer/r1i1p1f1/AERday/maxpblz/gn"
         },
-        "destination_path_prefix": "/~/globus-shared-files/CMIP6/",
-        "data_path_prefix": "/~/globus-shared-files/CMIP6/",
+        "destination": {
+            "id": settings.get("globus_endpoint_id")
+        },
+        "destination_path_prefix": settings.get("destination_path_prefix"),
         "facets": {
+            "project": "CMIP6",
             "activity_drs": "AerChemMIP",
             "institution_id": "EC-Earth-Consortium",
             "dource_id": "EC-Earth3-AerChem",
@@ -45,7 +45,7 @@ if __name__ == "__main__":
             "table_id": "AERday",
             "variable_id": "maxpblz",
             "grid_label": "gn",
-            "version": "v20201006"
+            "version": "20201006"
         },
         "compute_endpoint_id": settings.get("compute_endpoint_id"),
         "generate_mapfile_id": config.get("functions", "generate_mapfile_id"),
@@ -55,8 +55,8 @@ if __name__ == "__main__":
         "index_publish_id": config.get("functions", "index_publish_id")
     }
     publish_body = {
-        "data_path_prefix": "/~/globus-shared-files/CMIP6/",
         "facets": {
+            "project": "CMIP6",
             "activity_drs": "AerChemMIP",
             "institution_id": "EC-Earth-Consortium",
             "dource_id": "EC-Earth3-AerChem",
@@ -65,7 +65,7 @@ if __name__ == "__main__":
             "table_id": "AERday",
             "variable_id": "maxpblz",
             "grid_label": "gn",
-            "version": "v20201006"
+            "version": "20201006"
         },
         "compute_endpoint_id": settings.get("compute_endpoint_id"),
         "generate_mapfile_id": config.get("functions", "generate_mapfile_id"),
@@ -79,6 +79,7 @@ if __name__ == "__main__":
         "compute_endpoint_id": settings.get("compute_endpoint_id"),
         "index_unpublish_id": config.get("functions", "index_unpublish_id")
     }
-    fm.run_flow("transfer_and_publish", body=transfer_and_publish_body, label="test1")
+    print("Run Transfer and Publish flow")
+    #fm.run_flow("transfer_and_publish", body=transfer_and_publish_body, label="test1")
     fm.run_flow("publish", body=publish_body, label="test2")
-    fm.run_flow("unpublish", body=unpublish_body, label="test3")
+    #fm.run_flow("unpublish", body=unpublish_body, label="test3")

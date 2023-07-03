@@ -8,10 +8,11 @@
                 "Parameters": {
                     "endpoint.$": "$.compute_endpoint_id",
                     "function.$": "$.generate_mapfile_id",
-                    "args.=": "[data_path_prefix + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/' + facets.version + '/']",
+                    "args.=": "[facets.project + '/' + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/v' + facets.version]",
                     "kwargs": {}
                 },
                 "ResultPath": "$.GenerateMapfileResult",
+                "WaitTime": 60,
                 "ActionScope": "https://auth.globus.org/scopes/facd7ccc-c5f4-42aa-916b-a0e270e2c2a9/all",
                 "Next": "RunAutocurator"
             },
@@ -21,7 +22,7 @@
                 "Parameters": {
                     "endpoint.$": "$.compute_endpoint_id",
                     "function.$": "$.run_autocurator_id",
-                    "args.=": "[GenerateMapfileResult.details.result[0]]",
+                    "args.=": "[facets.project + '/' + facets.activity_drs + '/' + facets.institution_id + '/' + facets.dource_id + '/' + facets.experiment_id + '/' + facets.member_id + '/' + facets.table_id + '/' + facets.variable_id + '/' + facets.grid_label + '/v' + facets.version, GenerateMapfileResult.details.result[0]]",
                     "kwargs": {}
                 },
                 "ResultPath": "$.RunAutocuratorResult",
@@ -76,6 +77,10 @@
                 "type": "object",
                 "title": "Facets",
                 "properties": {
+                    "project": {
+                        "type": "string",
+                        "title": "Facet - project"
+                    },
                     "activity_drs": {
                         "type": "string",
                         "title": "Facet - activity_drs"
@@ -114,6 +119,7 @@
                     }
                 },
                 "required": [
+                    "project",
                     "activity_drs",
                     "institution_id",
                     "dource_id",
@@ -125,6 +131,7 @@
                     "version"
                 ],
                 "propertyOrder": [
+                    "project",
                     "activity_drs",
                     "institution_id",
                     "dource_id",
