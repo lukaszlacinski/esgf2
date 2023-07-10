@@ -1,12 +1,15 @@
 # esgf2
 ESGF2 Publication Flows
 
-## ESGF Publisher
+## ESG Publisher
 
-The ESGF2 Flows use the ESGF Publisher to extract metadata from climate files,
+The ESGF2 Flows use the ESG Publisher to extract metadata from climate files,
 autocurate them and create metadata entries about datasets and files to publish
-to the ESGF2 and/or ESGF index. It is assumed that the ESGF Publisher is set up
+to the ESGF2 and/or ESGF index. It is assumed that the ESG Publisher is set up
 on the data node.
+
+Step-by-step instructions for setting up the ESG Publisher on a test Linux workstation can be found [here](docs/workstation.md).
+
 
 ## Globus Compute Endpoint
 
