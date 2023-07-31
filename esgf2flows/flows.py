@@ -1,7 +1,7 @@
 import json
 import hashlib
 
-from settings import settings, flows
+from settings import flows
 
 
 class FlowsManager:
@@ -11,6 +11,7 @@ class FlowsManager:
         self.auth_manager = auth_manager
         self.flows_client = self.auth_manager.get_flows_client()
 
+        print(flows.items())
         for flow_name, file_name in flows.items():
             f = open(file_name, "r")
             flow = json.load(f)

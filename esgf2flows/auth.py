@@ -2,7 +2,7 @@ from globus_sdk import TransferClient, FlowsClient, SpecificFlowClient, NativeAp
 from globus_sdk.scopes.data import AuthScopes, TransferScopes, FlowsScopes
 from globus_compute_sdk import Client as ComputeClient
 
-from settings import settings, flows
+from settings import globus_auth, flows
 
 
 class AuthManager:
@@ -21,7 +21,7 @@ class AuthManager:
 
     def __init__(self, config):
         self.config = config
-        self.native_client = NativeAppAuthClient(settings.get("client_id"))
+        self.native_client = NativeAppAuthClient(globus_auth.get("client_id"))
         self.services = [
             "auth.globus.org",
             "transfer.api.globus.org",

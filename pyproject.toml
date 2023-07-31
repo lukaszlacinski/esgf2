@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "esgf2flows"
+version = "0.0.1"
+authors = [
+    {name = "Lukasz Lacinski", email = "lukasz@uchicago.edu"},
+]
+description = "Globus Flows Management package for ESGF2 climate dataset publication"
+dependencies = [
+    "globus_automate_client == 0.17.0",
+    "globus_cli == 3.15.0",
+    "globus_compute_common == 0.2.0",
+    "globus_compute_endpoint == 2.1.0",
+    "globus_compute_sdk == 2.1.0",
+    "globus_sdk == 3.21.0",
+]
+
+[tool.setuptools]
+packages = ["esgf2flows"]
