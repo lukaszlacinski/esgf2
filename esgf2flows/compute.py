@@ -1,4 +1,5 @@
 import hashlib
+import dill
 from globus_compute_sdk.serialize import ComputeSerializer
 from settings import compute_functions
 import functions
@@ -22,9 +23,12 @@ class ComputeManager:
                 print(f"Function '{function_name}' already has been registered: {config_id}")
                 continue
             print(f"Registering new/updated compute function '{function_name}'")
-            uuid = self.compute_client.register_function(function)
+            uuid = self.compute_client.register_function(function, function_name)
             self.config.set("functions", function_name + "_id", uuid)
             self.config.set("functions", function_name + "_checksum", new_checksum)
 
     def get_endpoint_status(self, compute_endpoint_id):
         return self.compute_client.get_endpoint_status(compute_endpoint_id)
+
+    def get_endpoint_metadata(self, compute_endpoint_id):
+        return self.compute_client.get_endpoint_metadata(compute_endpoint_id)
